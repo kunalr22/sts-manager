@@ -1,15 +1,23 @@
-import "dotenv/config";
-import { drizzle } from "drizzle-orm/node-postgres";
+import dotenv from "dotenv";
+import { drizzle, NodePgDatabase } from "drizzle-orm/node-postgres";
+import { getEnvPath } from "../pathResolver.js";
+
+let db: NodePgDatabase;
+
+dotenv.config({
+    path: getEnvPath(),
+});
 
 const dbURL = process.env.DATABASE_URL;
-if (!dbURL) {
-    throw new Error("DATABASE_URL is not defined in the environment variables.");
+if (!dbURL)
+    console.log("DATABASE_URL is not defined in the environment variables.");
+else {
+    db = drizzle(dbURL);
+    if (!db)
+        console.log("Failed to initialize the database connection.");
+    else
+        console.log("Database connection established successfully.");
 }
-const db = drizzle(dbURL);
-if (!db) {
-    throw new Error("Failed to initialize the database connection.");
-}
-
-console.log("Database connection established successfully.");
 
 export { db };
+

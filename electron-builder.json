@@ -1,6 +1,9 @@
 {
     "appId": "com.kunalrishi.stsmanager",
     "files": ["dist-electron", "dist-react"],
+    "extraResources": [
+        ".env"
+    ],
     "icon": "./sts-logo.png",
     "mac": {
         "target": "dmg"
