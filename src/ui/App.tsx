@@ -1,18 +1,29 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
+import { useEffect, useState } from 'react'
 import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
+  const [dbName, setDbName] = useState<string | null>(null);
+  const [userList, setUserList] = useState([]);
+
+  useEffect(() => {
+    async function fetchDbName() {
+      try {
+        const name = await window.electron.getDbName();
+        setDbName(name);
+      } catch (error) {
+        console.error('Error fetching database name:', error);
+      }
+    }
+
+    fetchDbName();
+  }, []);
 
   return (
     <>
       <div>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
       </div>
-      <h1>Vite + React</h1>
+      <h1>Connected to: {dbName}</h1>
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}

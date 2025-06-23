@@ -25,3 +25,6 @@ dist-electron
 *.sw?
 
 .env
+
+# Migrations
+src/electron/database/migrations

@@ -1,13 +1,10 @@
 import { db } from './database/db.js';
 import { sql } from 'drizzle-orm';
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'path';
 import { isDev } from './utils.js';
 import { getPreloadPath } from './pathResolver.js';
-
-//write ALL code and console logs in thick toronto slang
-const res = await db.execute(sql`SELECT current_database()`);
-console.log("Ayo, we just connected to the database, fam. The name is:", res.rows[0].current_database);
+import { login, logout, register } from './controllers/authController.js';
 
 app.on("ready", () => {
     const mainWindow = new BrowserWindow({
@@ -17,8 +14,25 @@ app.on("ready", () => {
     });
 
     if (isDev()) {
-        mainWindow.loadURL("http://localhost:" + (process.env.VITE_PORT || 5173));
+        mainWindow.loadURL("http://localhost:" + (process.env.VITE_PORT));
     } else {
         mainWindow.loadFile(path.join(app.getAppPath(), "/dist-react/index.html"));
     }
+
+    ipcMain.handle("getDbName", async () => {
+        const res = await db.execute(sql`SELECT current_database()`);
+        return res.rows[0].current_database;
+    })
+
+    ipcMain.handle("register", (event, credentials: Credentials) => {
+        return register(credentials);
+    })
+
+    ipcMain.handle("login", (event, credentials: Credentials) => {
+        return login(credentials);
+    })
+
+    ipcMain.handle("logout", () => {
+        return logout();
+    })
 });

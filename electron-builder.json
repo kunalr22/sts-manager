@@ -2,7 +2,7 @@
     "appId": "com.kunalrishi.stsmanager",
     "files": ["dist-electron", "dist-react"],
     "extraResources": [
-        ".env"
+        ".env", "dist-electron/preload.cjs"
     ],
     "icon": "./sts-logo.png",
     "mac": {
