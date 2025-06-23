@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { db } from "../database/db.js";
-import { UserTable } from "../database/schema.js";
+import { User } from "../database/schema.js";
 import { eq } from "drizzle-orm";
 import Store from "electron-store";
 
@@ -8,7 +8,7 @@ const store = new Store();
 
 export const register = async (credentials: Credentials) => {
     try {
-        if (store.get("loggedInUser")) {
+        if (store.get("currentUser")) {
             console.log("A user is already logged in. Please log out before registering a new user.");
             return false;
         }
@@ -16,22 +16,23 @@ export const register = async (credentials: Credentials) => {
         const { username, password } = credentials;
         const user = await db
                         .select()
-                        .from(UserTable)
-                        .where(eq(UserTable.username, username))
+                        .from(User)
+                        .where(eq(User.username, username))
                         .limit(1);
         if (user.length > 0) {
             return false;
         }
 
         const hash = await bcrypt.hash(password, 10);
-        await db.insert(UserTable).values({
+        await db.insert(User).values({
             username: username,
             password: hash,
             isAdmin: false,
         })
-        return user;
+        return true;
     } catch (error) {
         console.error("Error registering user:", error);
+        return false;
     }
 }
 
@@ -40,8 +41,8 @@ export const login = async (credentials: Credentials) => {
         const { username, password } = credentials;
         const user = await db
                         .select()
-                        .from(UserTable)
-                        .where(eq(UserTable.username, username))
+                        .from(User)
+                        .where(eq(User.username, username))
                         .limit(1);
         if (user.length === 0) {
             return false;
@@ -51,7 +52,7 @@ export const login = async (credentials: Credentials) => {
             return false;
         }
 
-       store.set("loggedInUser", user[0].username);
+       store.set("currentUser", user[0].username);
 
         return user[0];
     } catch (error) {
@@ -69,3 +70,12 @@ export const logout = () => {
         return false;
     }
 }
+
+export const getCurrentUser = (): string | undefined => {
+    try {
+        return store.get("currentUser") as string | undefined
+    } catch(error) {
+        console.log("Error getting current user: " + error);
+    }
+}
+    

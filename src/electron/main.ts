@@ -4,7 +4,7 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'path';
 import { isDev } from './utils.js';
 import { getPreloadPath } from './pathResolver.js';
-import { login, logout, register } from './controllers/authController.js';
+import { login, logout, register, getCurrentUser } from './controllers/authController.js';
 
 app.on("ready", () => {
     const mainWindow = new BrowserWindow({
@@ -34,5 +34,9 @@ app.on("ready", () => {
 
     ipcMain.handle("logout", () => {
         return logout();
+    })
+
+    ipcMain.handle("getCurrentUser", () => {
+        return getCurrentUser();
     })
 });

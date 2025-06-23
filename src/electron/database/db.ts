@@ -20,4 +20,3 @@ else {
 }
 
 export { db };
-

@@ -15,5 +15,4 @@ export function getEnvPath(): string {
         app.getAppPath(),
         isDev() ? ".env" : "../.env"
     )
-    
 }
