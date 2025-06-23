@@ -4,13 +4,12 @@ import './App.css'
 function App() {
   const [count, setCount] = useState(0)
   const [dbName, setDbName] = useState<string | null>(null);
-  const [userList, setUserList] = useState([]);
 
   useEffect(() => {
     async function fetchDbName() {
       try {
-        const name = await window.electron.getDbName();
-        setDbName(name);
+        const res = await window.electron.getDbName();
+        setDbName(res.data as string);
       } catch (error) {
         console.error('Error fetching database name:', error);
       }

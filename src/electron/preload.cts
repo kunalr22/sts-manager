@@ -8,4 +8,4 @@ electron.contextBridge.exposeInMainWorld("electron", {
     login: (credentials: Credentials) => electron.ipcRenderer.invoke("login", credentials),
     logout: () => electron.ipcRenderer.invoke("logout"),
     getCurrentUser: () => electron.ipcRenderer.invoke("getCurrentUser"),
-})
+});
