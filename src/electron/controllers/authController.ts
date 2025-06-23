@@ -63,7 +63,7 @@ export const login = async (credentials: Credentials) => {
 
 export const logout = () => {
     try {
-        store.delete("loggedInUser");
+        store.delete("currentUser");
         return true;
     } catch (error) {
         console.error("Error logging out user:", error);
