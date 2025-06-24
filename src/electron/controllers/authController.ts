@@ -52,7 +52,7 @@ export const register = async (credentials: Credentials): Promise<IpcResponse<nu
     }
 }
 
-export const login = async (credentials: Credentials): Promise<IpcResponse<null>> => {
+export const login = async (credentials: Credentials): Promise<IpcResponse<UserResponse>> => {
     try {
         const { username, password } = credentials;
         const user = await db
@@ -63,7 +63,10 @@ export const login = async (credentials: Credentials): Promise<IpcResponse<null>
         if (user.length === 0) {
             return {
                 status: false,
-                data: null,
+                data: {
+                    id: "",
+                    username: "",
+                },
                 message: "Login failed. Please try again."
             };
         }
@@ -71,7 +74,10 @@ export const login = async (credentials: Credentials): Promise<IpcResponse<null>
         if (!isValidPassword) {
             return {
                 status: false,
-                data: null,
+                data: {
+                    id: "",
+                    username: "",
+                },
                 message: "Login failed. Please try again."
             };
         }
@@ -80,14 +86,20 @@ export const login = async (credentials: Credentials): Promise<IpcResponse<null>
 
         return {
             status: true,
-            data: null,
+            data: {
+                id: user[0].id,
+                username: user[0].username,
+            },
             message: "Logged in successfully!"
         };
     } catch (error) {
         console.error("Error logging in user:", error);
         return {
             status: false,
-            data: null,
+            data: {
+                id: "",
+                username: "",
+            },
             message: "Error logging in: " + (error instanceof Error ? error.message : String(error))
         }
     }
